@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HTML basics</title>
+    <meta name="description" content="Javascript imagePeeler - great script for your website!">
+    <meta name="author" content="Bartłomiej Święch">
+
+    <meta property="og:title" content="Javascript imagePeeler">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Javascript imagePeeler - great script for your website!">
+    <meta property="og:image" content="image.png">
+
+    <link rel="stylesheet" type="text/css" href="static/stylesheets/imagePeeler.css">
+    <link rel="stylesheet" type="text/css" href="static/stylesheets/styles.css">
+
+    <script src="static/scripts/imagePeeler.js"></script>
+    <script src="static/scripts/app.js"></script>
+</head>
+
+<body>
+    <div class="imagePeeler">
+        <img src="static/images/eiffel1.jpg" alt="Eiffel at day">
+        <div class="imagePeeler__mask" style="background-image: url('static/images/eiffel2.jpg');">
+            <div class="imagePeeler__handler">
+                <div class="imagePeeler__icon">
+                    <img src="static/icons/double-arrow-vertical-symbol.svg" alt="double vertical arrow">
+                    <!-- icon author https://www.flaticon.com/authors/catalin-fertu -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
