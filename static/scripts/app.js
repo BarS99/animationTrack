@@ -1,19 +1,45 @@
+/**
+ * Initialize AnimationTrack.
+ * @param {string} object - ID of an object.
+ * @param {number} start - OffsetY of the beginning of the animation.
+ * @param {number} end - OffsetY of the end of the animation.
+ * @param {object} props - Object with properties.
+ * @param {boolean} props.opacity - Animate opacity, true by default.
+ * @param {boolean} props.translate - Animate object movement, true by default.
+ * @param {number} props.x - Include x offset in your animation, 0 by default.
+ */
 class AnimationTrack {
-    constructor(object, start, end, properties) {
+    constructor(object, start, end, props) {
         this.object = document.getElementById(object);
         this.start = start;
         this.end = end;
-        this.properties = {
-            opacity: false,
-            translateY: false,
+        this.props = {
+            opacity: true,
+            translate: true,
             x: 0,
         };
-
-        this.properties = {
-            ...this.properties,
-            ...properties
+        this.props = {
+            ...this.props,
+            ...props
         };
+        this.windowCenter = window.scrollY + window.innerHeight / 2;
 
+        this.validate();
+
+        window.addEventListener("scroll", this.handleScroll);
+    }
+
+    // event handlers
+
+    handleScroll = () => {
+        this.updateWindowCenter();
+        this.getProgress();
+        this.setValues(this.getProgress());
+    }
+
+    // utilities
+
+    validate = () => {
         if (this.object === null || this.object === undefined) {
             console.error("AnimationTrack: Object is not defined!");
             return;
@@ -26,61 +52,69 @@ class AnimationTrack {
             console.error("AnimationTrack: Value end is not defined or is not a number!");
             return;
         }
-
-        window.addEventListener("scroll", this.setValues);
     }
 
-    setValues = () => {
-        let windowCenter = window.scrollY + window.innerHeight / 2,
-            progress = 0;
+    updateWindowCenter = () => {
+        this.windowCenter = window.scrollY + window.innerHeight / 2;
+    }
 
-        if (windowCenter < this.start) {
+    getProgress = () => {
+        if (this.windowCenter < this.start || this.windowCenter > this.end) return false;
+
+        if (this.object.classList.contains('animation-track--tracking-disabled')) this.object.classList.remove('animation-track--tracking-disabled');
+
+        let progress = 0;
+
+        if (this.windowCenter < this.start) {
             progress = 0;
-        } else if (windowCenter > this.start && windowCenter < this.end) {
-            progress = ((windowCenter - this.start) / this.end) * 2;
-        } else if (windowCenter > this.end) {
+        } else if (this.windowCenter > this.start && this.windowCenter < this.end) {
+            progress = ((this.windowCenter - this.start) / this.end) * 2;
+        } else if (this.windowCenter > this.end) {
             progress = 1;
         }
 
+        return progress;
+    }
+
+    setValues = (progress) => {
+        if (progress === false) {
+            if (this.object.classList.contains('animation-track--tracking-disabled')) {
+                return;
+            } else {
+                this.object.classList.add('animation-track--tracking-disabled');
+                if (this.props.opacity) this.object.style.opacity = 0;
+                if (this.props.translate) this.object.style.transform = this.object.style.transform.replace(/translateX\((.*?)\)/, 'translateX(0)');
+            }
+            return;
+        }
+
         if (progress <= 0) {
-            if (this.properties.opacity) {
+            if (this.props.opacity) {
                 this.object.style.opacity = 0;
-            } else if (this.properties.translate) {
+            } else if (this.props.translate) {
                 this.object.style.transform = `translateY(0) translateX(0)`;
             }
         } else if (progress > 0 && progress < 1) {
-            if (this.properties.opacity) {
+            if (this.props.opacity) {
                 if (progress < 0.5) {
                     this.object.style.opacity = progress * 2;
                 } else {
                     this.object.style.opacity = (1 - progress) * 2;
                 }
             }
-
-            if (this.properties.translate && this.properties.x !== 0) {
+            if (this.props.translate) {
                 if (progress < 0.5) {
-                    this.object.style.transform = `translate3d(${(progress * 2) * this.properties.x}px, calc(${windowCenter - this.start}px - 50%), 0)`;
+                    this.object.style.transform = `translateX(${(progress * 2) * this.props.x}px) translateY(calc(${this.windowCenter - this.start}px - 50%))`;
                 } else {
-                    this.object.style.transform = `translate3d(${((1 - progress) * 2) * this.properties.x}px, calc(${windowCenter - this.start}px - 50%), 0)`;
+                    this.object.style.transform = `translateX(${((1 - progress) * 2) * this.props.x}px) translateY(calc(${this.windowCenter - this.start}px - 50%))`;
                 }
-            } else if (this.properties.translate) {
-                this.object.style.transform = `translate3d(0, calc(${windowCenter - this.start}px - 50%), 0)`;
             }
         } else if (progress >= 1) {
-            if (this.properties.opacity) {
+            if (this.props.opacity) {
                 this.object.style.opacity = 0;
-            } else if (this.properties.translate) {
-                this.object.style.transform = `translate3d(0, calc(${windowCenter - this.end}px - 50%), 0)`;
+            } else if (this.props.translate) {
+                this.object.style.transform = `translateX(0) translateY(calc(${this.windowCenter - this.end}px - 50%))`;
             }
         }
-
     }
 }
-
-window.addEventListener("load", () => {
-    const object = new AnimationTrack('object', 1000, 2000, {
-        opacity: true,
-        translate: true,
-        x: 300,
-    });
-})

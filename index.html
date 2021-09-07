@@ -21,6 +21,15 @@
 
 <body>
     <div class="object" id="object"></div>
+
+    <script>
+        window.addEventListener("load", () => {
+            const object = new AnimationTrack('object', 1000, 2000, {
+                x: 500,
+                opacity: true,
+            });
+        })
+    </script>
 </body>
 
 </html>
