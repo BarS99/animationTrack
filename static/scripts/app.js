@@ -1,14 +1,14 @@
-/**
- * Initialize AnimationTrack.
- * @param {string} object - ID of an object.
- * @param {number} start - OffsetY of the beginning of the animation.
- * @param {number} end - OffsetY of the end of the animation.
- * @param {object} props - Object with properties.
- * @param {boolean} props.opacity - Animate opacity, true by default.
- * @param {boolean} props.translate - Animate object movement, true by default.
- * @param {number} props.x - Include x offset in your animation, 0 by default.
- */
 class AnimationTrack {
+    /**
+     * Initialize AnimationTrack.
+     * @param {string} object - ID of an object.
+     * @param {number} start - OffsetY of the beginning of the animation.
+     * @param {number} end - OffsetY of the end of the animation.
+     * @param {object} props - Object with properties.
+     * @param {boolean} props.opacity - Animate opacity, true by default.
+     * @param {boolean} props.translate - Animate object movement, true by default.
+     * @param {number} props.x - Include x offset in your animation, 0 by default.
+     */
     constructor(object, start, end, props) {
         this.object = document.getElementById(object);
         this.start = start;
